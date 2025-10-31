@@ -23,7 +23,7 @@ export default function ArticlePage({ params }: { params: { slug: string } }) {
   return (
     <article>
       {article.image && (
-        <div className="w-full h-96 relative rounded-md mb-4 overflow-hidden">
+        <div className="w-full pb-[100%] relative rounded-md mb-4 overflow-hidden">
           <Image src={article.image} alt={article.title} fill style={{ objectFit: 'cover' }} unoptimized={isExternal(article.image)} />
         </div>
       )}

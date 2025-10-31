@@ -16,7 +16,7 @@ export default function Header() {
       <div className="bg-gray-50 border-b">
         <div className="container flex items-center justify-between text-sm text-gray-600 py-2">
           <div className="flex items-center gap-4">
-            <div className="hidden sm:inline-flex items-center gap-2">🌤️ <span className="">27 °C Mumbai</span></div>
+            {/* <div className="hidden sm:inline-flex items-center gap-2">🌤️ <span className="">27 °C Mumbai</span></div> */}
             <div>{dateStr}</div>
           </div>
           <div className="flex items-center gap-3">
