@@ -1,0 +1,58 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom small tweaks */
+body {
+  @apply bg-white text-slate-800 antialiased;
+  /* Font is applied via next/font Rubik class on the root HTML element (see app/layout.tsx). Keep emoji fallback in stack via a variable if needed. */
+}
+
+.container {
+  /* increased max width to 100rem as requested */
+  max-width: 1150px;
+  @apply mx-auto px-4;
+}
+
+.article-card-title { @apply text-lg font-semibold }
+.muted { @apply text-slate-500 }
+
+/* Code theming */
+pre {
+  @apply bg-slate-100 rounded-md p-4 overflow-auto text-sm;
+  border: 1px solid rgba(15, 23, 42, 0.04);
+}
+
+code {
+  @apply font-mono bg-slate-100 px-1 rounded text-sm text-slate-800;
+}
+
+.prose code, .prose pre {
+  /* Allow code blocks inside prose to look consistent */
+  @apply bg-slate-100;
+}
+
+/* Breaking marquee styles */
+.marquee {
+  overflow: hidden;
+}
+.marquee-content {
+  display: inline-block;
+  white-space: nowrap;
+  will-change: transform;
+  animation: marquee 180s linear infinite;
+}
+@keyframes marquee {
+  from { transform: translateX(0%); }
+  to { transform: translateX(-50%); }
+}
+
+/* When paused, stop the CSS animation */
+.marquee-content.paused { animation-play-state: paused; }
+
+/* Pause on hover for pointer users */
+.marquee:hover .marquee-content { animation-play-state: paused; }
+
+/* Control button styling and positioning */
+.breaking-control { position: absolute; right: 12px; top: 8px; }
