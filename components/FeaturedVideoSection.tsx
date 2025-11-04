@@ -1,5 +1,8 @@
+"use client"
+
 import Image from 'next/image'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
 const STATIC_ITEMS = {
   hero: {
@@ -16,6 +19,36 @@ const STATIC_ITEMS = {
 }
 
 export default function FeaturedVideoSection() {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [activeVideoId, setActiveVideoId] = useState<string | null>(null)
+
+  // Close modal on ESC
+  useEffect(() => {
+    if (!isModalOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsModalOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [isModalOpen])
+
+  // Lock body scroll when modal open
+  useEffect(() => {
+    if (isModalOpen) {
+      const prev = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = prev
+      }
+    }
+  }, [isModalOpen])
+
+  const openHeroVideo = () => {
+    // Replace with your YouTube video ID
+    setActiveVideoId('dQw4w9WgXcQ')
+    setIsModalOpen(true)
+  }
+
   return (
     <section className="mt-8">
       <div className="flex items-center gap-4 mb-6">
@@ -25,7 +58,7 @@ export default function FeaturedVideoSection() {
       <div className=" grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* Left: big video-style hero */}
         <div className="lg:col-span-2 relative">
-          <div className="relative border-2 border-yellow-500">
+          <div className="relative border-2 border-yellow-500 cursor-pointer" onClick={openHeroVideo}>
             <div className="w-full h-96 relative">
               <Image src={STATIC_ITEMS.hero.image} alt={STATIC_ITEMS.hero.title} fill style={{ objectFit: 'cover' }} unoptimized />
             </div>
@@ -56,6 +89,48 @@ export default function FeaturedVideoSection() {
           ))}
         </aside>
       </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/90" onClick={() => setIsModalOpen(false)} />
+
+          {/* Modal content */}
+          <div className="absolute inset-0 flex items-center justify-center p-4">
+            <div className="w-full max-w-6xl bg-black border border-neutral-700 shadow-2xl relative">
+              {/* Close */}
+              <button
+                aria-label="Close"
+                className="absolute -right-3 -top-3 bg-neutral-900 text-white w-10 h-10 rounded-full flex items-center justify-center border border-neutral-700 hover:bg-neutral-800"
+                onClick={() => setIsModalOpen(false)}
+              >
+                ✕
+              </button>
+
+              {/* Title bar */}
+              <div className="text-white text-sm px-4 py-2 border-b border-neutral-800 bg-black/70">
+                {STATIC_ITEMS.hero.title}
+              </div>
+
+              {/* Player */}
+              <div className="p-4">
+                <div className="relative w-full pt-[56.25%] bg-black border-2 border-orange-500">
+                  {activeVideoId && (
+                    <iframe
+                      className="absolute inset-0 w-full h-full"
+                      src={`https://www.youtube.com/embed/${activeVideoId}?autoplay=1&rel=0`}
+                      title="YouTube video player"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   )
 }

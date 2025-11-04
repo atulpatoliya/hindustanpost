@@ -12,10 +12,10 @@ export default function NewsTile({ article, size = 'small', className = '' }: { 
 
   if (size === 'large') {
     return (
-      <Link href={`/articles/${article.slug}`} className={`block bg-white rounded overflow-hidden shadow-sm ${className}`}>
+      <Link href={`/articles/${article.slug}`} className={`group block bg-white rounded overflow-hidden shadow-sm ${className}`}>
         {article.image && (
-          <div className="w-full h-[400px] relative">
-            <Image src={article.image} alt={article.title} fill style={{ objectFit: 'cover' }} unoptimized={isExternal(article.image)} />
+          <div className="w-full h-[400px] relative overflow-hidden">
+            <Image className="transition-transform duration-300 ease-out group-hover:scale-105" src={article.image} alt={article.title} fill style={{ objectFit: 'cover' }} unoptimized={isExternal(article.image)} />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
               <div className="p-6">
                 <div className="text-[10px] text-white mb-1 capitalize bg-black/70 inline-block px-2 py-1 rounded">{article.category}</div>
@@ -33,10 +33,10 @@ export default function NewsTile({ article, size = 'small', className = '' }: { 
   // small tile
   if (size === 'compact') {
     return (
-      <Link href={`/articles/${article.slug}`} className={`flex items-start gap-3 bg-white rounded overflow-hidden ${className}`}>
+      <Link href={`/articles/${article.slug}`} className={`group flex items-start gap-3 bg-white rounded overflow-hidden ${className}`}>
         {article.image && (
-          <div className="w-20 h-14 relative flex-shrink-0">
-            <Image src={article.image} alt={article.title} fill style={{ objectFit: 'cover' }} unoptimized={isExternal(article.image)} />
+          <div className="w-20 h-14 relative flex-shrink-0 overflow-hidden">
+            <Image className="transition-transform duration-300 ease-out group-hover:scale-105" src={article.image} alt={article.title} fill style={{ objectFit: 'cover' }} unoptimized={isExternal(article.image)} />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           </div>
         )}
@@ -50,10 +50,10 @@ export default function NewsTile({ article, size = 'small', className = '' }: { 
   }
 
   return (
-    <Link href={`/articles/${article.slug}`} className={`block bg-white rounded overflow-hidden shadow-sm ${className}`}>
+    <Link href={`/articles/${article.slug}`} className={`group block bg-white rounded overflow-hidden shadow-sm ${className}`}>
       {article.image && (
-        <div className="w-full h-[192px] relative">
-          <Image src={article.image} alt={article.title} fill style={{ objectFit: 'cover' }} unoptimized={isExternal(article.image)} />
+        <div className="w-full h-[192px] relative overflow-hidden">
+          <Image className="transition-transform duration-300 ease-out group-hover:scale-105" src={article.image} alt={article.title} fill style={{ objectFit: 'cover' }} unoptimized={isExternal(article.image)} />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
             <div className="p-3">
               <div className=" text-white mb-1 capitalize bg-black/70 inline-block px-2 py-0.5 rounded text-[10px]">{article.category}</div>
