@@ -1,12 +1,16 @@
 "use client"
 import Image from 'next/image'
 import Link from 'next/link'
-import dynamic from 'next/dynamic'
+import dynamicImport from 'next/dynamic'
 import { useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { WEB_STORIES_LIST } from '../../data/webstories'
 
 const STORIES = WEB_STORIES_LIST
+
+// This page uses client-side navigation hooks (useSearchParams). Opt out of static
+// prerendering so Next.js doesn't attempt to pre-render this page during build.
+export const dynamic = 'force-dynamic'
 
 const LATEST_NEWS = [
   { title: 'Harmanpreet Kaur की टीम ने जीता मैच', date: 'November 3, 2025' },
@@ -16,7 +20,15 @@ const LATEST_NEWS = [
   { title: 'खेल की दुनिया में बड़ी खबर', date: 'November 2, 2025' },
 ]
 
-function WebStoryCard({ story, onOpen }: { story: typeof STORIES[number]; onOpen: (slug: string) => void }) {
+interface WebStoryCardProps {
+  story: typeof STORIES[number];
+  // `onOpen` accepts a slug string. Some ESLint setups flag unused names in type positions;
+  // disable the unused-vars check for this type entry to keep the parameter named for clarity.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onOpen(slug: string): void;
+}
+
+function WebStoryCard({ story, onOpen }: WebStoryCardProps) {
   return (
     <article className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => onOpen(story.slug)}>
         <div className="relative w-full h-48">
@@ -31,7 +43,7 @@ function WebStoryCard({ story, onOpen }: { story: typeof STORIES[number]; onOpen
         </div>
       <div className="p-4">
         <h3 className="text-lg font-semibold mb-2 line-clamp-2 leading-tight">
-          <button onClick={() => onOpen(story.slug)} className="text-left text-gray-900 hover:text-blue-600 w-full">
+          <button className="text-left text-gray-900 hover:text-blue-600 w-full">
             {story.title}
           </button>
         </h3>
@@ -63,7 +75,7 @@ function LatestNewsItem({ title, date }: { title: string; date: string }) {
   )
 }
 
-const StoryOverlay = dynamic(() => import('./[slug]/page'), { ssr: false })
+const StoryOverlay = dynamicImport(() => import('./[slug]/page'), { ssr: false })
 
 export default function WebStoriesPage() {
   const router = useRouter()
