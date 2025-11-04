@@ -7,7 +7,7 @@ export default function BreakingMarquee({ limit = 8, intervalMs = 4000 }: { limi
   const [items, setItems] = useState<any[]>([])
   const [paused, setPaused] = useState(false)
   const [index, setIndex] = useState(0)
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     const controller = new AbortController()

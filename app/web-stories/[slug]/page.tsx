@@ -1,9 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { WEB_STORIES_LIST } from '../../../data/webstories'
 
 type StorySlide = {
@@ -37,30 +36,19 @@ export default function WebStoryPage({ params }: { params: { slug: string } }) {
     const [currentSlide, setCurrentSlide] = useState(0)
     const [isPaused, setIsPaused] = useState(false)
     const [progressMs, setProgressMs] = useState(0)
-    const [showClose, setShowClose] = useState(false)
     const [shareOpen, setShareOpen] = useState(false)
     const [copied, setCopied] = useState(false)
     const [showRefresh, setShowRefresh] = useState(false)
+    const [touchStart, setTouchStart] = useState(0)
 
     const story = WEB_STORIES[params.slug]
-
-    if (!story) {
-        return (
-            <div className="fixed inset-0 z-50 bg-[#8B4513] flex items-center justify-center">
-                <div className="text-center text-white">
-                    <h2 className="text-2xl mb-4">Story not found</h2>
-                    <Link href="/web-stories" className="underline">Go back to Web Stories</Link>
-                </div>
-            </div>
-        )
-    }
-
-    const slides = story.slides || [{ image: story.image, title: story.title }]
+    const slides = story?.slides || (story ? [{ image: story.image, title: story.title }] : [])
     const totalSlides = slides.length
     const SLIDE_DURATION_MS = 5000
 
     // Autoplay progress loop (pauses when isPaused)
     useEffect(() => {
+        if (!story) return
         if (isPaused) return
         const start = Date.now() - progressMs
         const id = setInterval(() => {
@@ -79,7 +67,7 @@ export default function WebStoryPage({ params }: { params: { slug: string } }) {
             }
         }, 100)
         return () => clearInterval(id)
-    }, [isPaused, currentSlide, totalSlides])
+    }, [isPaused, currentSlide, totalSlides, progressMs, story])
 
     // Reset progress when slide changes
     useEffect(() => {
@@ -127,8 +115,6 @@ export default function WebStoryPage({ params }: { params: { slug: string } }) {
         }
     }
 
-    const [touchStart, setTouchStart] = useState(0)
-
     const currentSlideData = slides[currentSlide]
     const currentProgressPct = Math.min(100, Math.max(0, (progressMs / SLIDE_DURATION_MS) * 100))
 
@@ -148,7 +134,9 @@ export default function WebStoryPage({ params }: { params: { slug: string } }) {
           return
         }
       }
-    } catch {}
+    } catch (error) {
+      console.error('Error checking URL parameters:', error)
+    }
     router.push('/web-stories')
   }
 
@@ -159,8 +147,6 @@ export default function WebStoryPage({ params }: { params: { slug: string } }) {
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
             tabIndex={0}
-            onMouseMove={() => setShowClose(true)}
-            onMouseLeave={() => setShowClose(false)}
         >
             {/* Blurred background derived from current slide */}
             <div className="absolute inset-0 -z-10">
@@ -231,10 +217,12 @@ export default function WebStoryPage({ params }: { params: { slug: string } }) {
                             className="w-9 h-9 bg-black/55 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-black/70 transition-colors"
                             aria-label="Share"
                         >
-                            <img
+                            <Image
                                 src="data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' fill='none'><path fill='%23fff' d='m21.1 25.4 9.87-9.86 1.42 1.42-9.86 9.87z'/><path stroke='%23fff' stroke-linecap='round' stroke-width='1.9' d='m16.85 19.82 15.33-4.14c.04 0 .07.03.06.06l-4.02 15.34a1.6 1.6 0 0 1-2.97.33l-2.93-5.73-5.77-2.88a1.6 1.6 0 0 1 .3-2.98Z'/></svg>"
-                                alt=""
-                                className="w-8 h-8 min-w-8 min-h-8"
+                                alt="Share"
+                                width={32}
+                                height={32}
+                                className="min-w-8 min-h-8"
                             />
                         </button>
                         
@@ -279,7 +267,9 @@ export default function WebStoryPage({ params }: { params: { slug: string } }) {
                                                 await navigator.clipboard.writeText(window.location.href)
                                                 setCopied(true)
                                                 setTimeout(() => setCopied(false), 1500)
-                                            } catch { }
+                                            } catch (error) {
+                                                console.error('Failed to copy to clipboard:', error)
+                                            }
                                         }}
                                         className="flex flex-col items-center gap-2"
                                     >
