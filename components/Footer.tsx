@@ -1,7 +1,7 @@
 export default function Footer() {
   return (
     <footer className="bg-black text-white" style={{ padding: '1rem', borderTop: '1px solid #eee', marginTop: '2rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div className="container" style={{ display: 'flex', justifyContent: 'space-between' }}>
         <div>© {new Date().getFullYear()} Hindustanpost</div>
         <div className="flex gap-4 ">
           <a href="/about">About</a>

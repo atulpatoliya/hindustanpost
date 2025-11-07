@@ -21,9 +21,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" className={rubik.className}>
       <body>
         <AnnouncementBar />
-        <div className="container">
+        <div className="container-full">
           <Header />
-          <main className="mt-6">{children}</main>
+          <main className="mt-6 container">{children}</main>
           <Footer />
         </div>
       </body>

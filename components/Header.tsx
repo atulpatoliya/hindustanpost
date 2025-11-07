@@ -11,7 +11,7 @@ export default function Header() {
   const dateStr = now.toLocaleDateString('en-GB', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
 
   return (
-    <header className="border-b bg-white">
+    <header className=" bg-white">
       {/* Main header: logo centered with date below */}
       <div className="container py-4">
         <div className="flex items-start justify-between">
@@ -48,8 +48,8 @@ export default function Header() {
       </div>
 
       {/* Category nav */}
-      <div className="border-t">
-        <div className="container">
+      <div className="border-t container border-black border-b">
+        <div className="">
           <nav className="flex items-center gap-4 overflow-x-auto py-3 text-base text-black justify-center">            
             {categories.map((c: string) => (
               <Link key={c} href={`/category/${c}`} className="capitalize px-3 py-1 hover:text-black whitespace-nowrap font-bold">{c}</Link>
