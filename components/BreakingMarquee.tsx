@@ -56,7 +56,7 @@ export default function BreakingMarquee({ limit = 8, intervalMs = 4000 }: { limi
               key={a.slug}
               className={`absolute transition-opacity duration-500 ${i === index ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
             >
-              <Link href={`/articles/${a.slug}`} className="font-semibold hover:underline block pr-16">{a.title}</Link>
+              <Link href={`/articles/${a.slug}`} className="font-semibold hover:underline block pr-2">{a.title}</Link>
             </div>
           ))}
           {/* container height stabilization */}

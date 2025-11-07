@@ -1,10 +1,14 @@
 export default function Footer() {
   return (
-    <footer style={{ padding: '1rem', borderTop: '1px solid #eee', marginTop: '2rem' }}>
+    <footer className="bg-black text-white" style={{ padding: '1rem', borderTop: '1px solid #eee', marginTop: '2rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <div>© {new Date().getFullYear()} Hindustanpost</div>
-        <div>
-          <a href="/about">About</a> | <a href="/contact">Contact</a> | <a href="/advertise">Advertise</a>
+        <div className="flex gap-4 ">
+          <a href="/about">About</a>
+          <a href="/contact">Contact</a>
+          <a href="/disclaimer">Disclaimer</a>
+          <a href="/terms">Terms of Service</a>
+          <a href="/privacy">Privacy Policy</a>
         </div>
       </div>
     </footer>
