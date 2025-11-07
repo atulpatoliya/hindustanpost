@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server'
 import { removeCategory, updateCategory } from '../../../../../lib/categories'
 
-export async function DELETE(request: Request, { params }: { params: { name: string } }) {
+export async function DELETE(request: Request, context: any) {
   try {
+    const params = await (context?.params ?? {})
     const name = params.name
     if (!name) return NextResponse.json({ error: 'name required' }, { status: 400 })
     const cats = removeCategory(decodeURIComponent(name))
@@ -12,8 +13,9 @@ export async function DELETE(request: Request, { params }: { params: { name: str
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { name: string } }) {
+export async function PUT(request: Request, context: any) {
   try {
+    const params = await (context?.params ?? {})
     const oldName = params.name
     if (!oldName) return NextResponse.json({ error: 'name required' }, { status: 400 })
     const body = await request.json()

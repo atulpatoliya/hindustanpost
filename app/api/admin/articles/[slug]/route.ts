@@ -1,18 +1,11 @@
-import { NextResponse } from 'next/server'
-import fs from 'fs'
-import path from 'path'
-import { Article, readArticlesFromFile, saveArticlesToFile } from '../../../../../lib/articles'
-
-// GET handler to fetch a single article
 import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
 import { Article, readArticlesFromFile, saveArticlesToFile } from '../../../../../lib/articles'
-
-// GET handler to fetch a single article
-export async function GET(request: NextRequest, context: { params: { slug: string } }) {
+export async function GET(request: NextRequest, context: any) {
   try {
-    const slug = context.params.slug
+    const params = await (context?.params ?? {})
+    const slug = params.slug
     const articles = readArticlesFromFile()
     const article = articles.find((a: Article) => a.slug === slug)
 
@@ -27,8 +20,9 @@ export async function GET(request: NextRequest, context: { params: { slug: strin
 }
 
 
-export async function PUT(request: Request, { params }: { params: { slug: string } }) {
+export async function PUT(request: Request, context: any) {
   try {
+    const params = await (context?.params ?? {})
     const slug = params.slug
     const body = await request.json()
     const { title, description, content, category, imageData, imageName } = body
@@ -68,8 +62,9 @@ export async function PUT(request: Request, { params }: { params: { slug: string
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { slug: string } }) {
+export async function DELETE(request: Request, context: any) {
   try {
+    const params = await (context?.params ?? {})
     const slug = params.slug
     const articles = readArticlesFromFile()
   const idx = articles.findIndex((a: any) => a.slug === slug)
