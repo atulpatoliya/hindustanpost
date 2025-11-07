@@ -1,7 +1,31 @@
 import { NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
-import { readArticlesFromFile, saveArticlesToFile } from '../../../../../lib/articles'
+import { Article, readArticlesFromFile, saveArticlesToFile } from '../../../../../lib/articles'
+
+// GET handler to fetch a single article
+import { NextRequest, NextResponse } from 'next/server'
+import fs from 'fs'
+import path from 'path'
+import { Article, readArticlesFromFile, saveArticlesToFile } from '../../../../../lib/articles'
+
+// GET handler to fetch a single article
+export async function GET(request: NextRequest, context: { params: { slug: string } }) {
+  try {
+    const slug = context.params.slug
+    const articles = readArticlesFromFile()
+    const article = articles.find((a: Article) => a.slug === slug)
+
+    if (!article) {
+      return NextResponse.json({ error: 'not found' }, { status: 404 })
+    }
+
+    return NextResponse.json(article)
+  } catch (err: any) {
+    return NextResponse.json({ error: err?.message || String(err) }, { status: 500 })
+  }
+}
+
 
 export async function PUT(request: Request, { params }: { params: { slug: string } }) {
   try {
@@ -10,10 +34,10 @@ export async function PUT(request: Request, { params }: { params: { slug: string
     const { title, description, content, category, imageData, imageName } = body
 
     const articles = readArticlesFromFile()
-  const idx = articles.findIndex((a: any) => a.slug === slug)
+    const idx = articles.findIndex((a: Article) => a.slug === slug)
     if (idx === -1) return NextResponse.json({ error: 'not found' }, { status: 404 })
 
-    const article = { ...articles[idx] }
+    const article: Article = { ...articles[idx] }
     if (title) article.title = title
     if (description !== undefined) article.description = description
     if (content !== undefined) article.content = content
