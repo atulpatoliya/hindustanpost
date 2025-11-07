@@ -2,9 +2,10 @@
 
 import React, { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
+import { Article } from '../lib/articles'
 
 export default function BreakingMarquee({ limit = 8, intervalMs = 4000 }: { limit?: number; intervalMs?: number }) {
-  const [items, setItems] = useState<any[]>([])
+  const [items, setItems] = useState<Article[]>([])
   const [paused, setPaused] = useState(false)
   const [index, setIndex] = useState(0)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
