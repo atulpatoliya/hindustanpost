@@ -1,7 +1,5 @@
-import { getArticlesByCategory, getAllArticles } from '../../../lib/articles'
-import { getAllCategories } from '../../../lib/categories'
-import { notFound } from 'next/navigation'
-import NewsTile from '../../../components/NewsTile'
+import { getAllArticles } from '../../lib/articles'
+import { getAllCategories } from '../../lib/categories'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -10,33 +8,24 @@ function isExternal(src?: string) {
   return /^https?:\/\//.test(src) || src.startsWith('data:')
 }
 
-export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
-  // Await params in Next.js 15+
-  const { category } = await params
-  
-  // Get articles for this category
-  const items = getArticlesByCategory(category)
-  
-  // If no articles found, show 404
-  if (!items.length) {
-    notFound()
-  }
-
-  // Get all unique categories from articles for sidebar
+export default function ArticlesPage() {
+  // Get all articles, sorted by published date (newest first)
   const allArticles = getAllArticles()
-  const articleCategories = Array.from(new Set(allArticles.map(a => a.category))).sort()
-  const allCategories = getAllCategories()
-  // Combine both lists and remove duplicates
-  const uniqueCategories = Array.from(new Set([...allCategories, ...articleCategories])).sort()
+  const sortedArticles = [...allArticles].sort((a, b) => {
+    return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+  })
 
   // Featured article (first one)
-  const featured = items[0]
-  const otherArticles = items.slice(1)
+  const featured = sortedArticles[0]
+  const otherArticles = sortedArticles.slice(1)
 
-  // Get latest articles for sidebar (excluding current category)
-  const latestArticles = getAllArticles()
-    .filter(a => a.category !== category)
-    .slice(0, 6)
+  // Get all unique categories
+  const articleCategories = Array.from(new Set(allArticles.map(a => a.category))).sort()
+  const allCategories = getAllCategories()
+  const uniqueCategories = Array.from(new Set([...allCategories, ...articleCategories])).sort()
+
+  // Get latest articles for sidebar
+  const latestArticles = sortedArticles.slice(0, 6)
 
   return (
     <div className="py-6">
@@ -47,17 +36,17 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
             <Link href="/" className="hover:text-black transition-colors">Home</Link>
           </li>
           <li className="text-gray-400">/</li>
-          <li className="text-gray-800 capitalize">{category}</li>
+          <li className="text-gray-800">All Articles</li>
         </ol>
       </nav>
 
-      {/* Category Header */}
+      {/* Page Header */}
       <div className="mb-8">
         <div className="flex items-center gap-4 mb-4">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 capitalize">{category}</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900">All Articles</h1>
           <div className="flex-1 border-t-2 border-[#C2185B]" />
           <div className="text-sm text-gray-600">
-            {items.length} {items.length === 1 ? 'Article' : 'Articles'}
+            {allArticles.length} {allArticles.length === 1 ? 'Article' : 'Articles'}
           </div>
         </div>
       </div>
@@ -108,7 +97,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
           {/* Other Articles Grid */}
           {otherArticles.length > 0 && (
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">More {category} News</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Latest News</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {otherArticles.map((article) => (
                   <Link
@@ -217,11 +206,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
                 <Link
                   key={cat}
                   href={`/category/${cat}`}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    cat === category
-                      ? 'bg-[#C2185B] text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
+                  className="px-4 py-2 rounded-md text-sm font-medium transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200"
                 >
                   {cat.charAt(0).toUpperCase() + cat.slice(1)}
                 </Link>
@@ -233,3 +218,4 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
     </div>
   )
 }
+
