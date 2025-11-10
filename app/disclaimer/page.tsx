@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { getAllArticles } from '../../lib/articles'
 
-export default function AboutUs() {
+export default function Disclaimer() {
   // Get latest articles for sidebar
   const allArticles = getAllArticles()
   const latestArticles = allArticles.slice(0, 5)
@@ -16,7 +16,7 @@ export default function AboutUs() {
             <Link href="/" className="hover:text-black transition-colors">Home</Link>
           </li>
           <li className="text-gray-400">/</li>
-          <li className="text-gray-800">About Us</li>
+          <li className="text-gray-800">Disclaimer</li>
         </ol>
       </nav>
 
@@ -24,15 +24,36 @@ export default function AboutUs() {
         {/* Main Content */}
         <div className="lg:col-span-8">
           <div className="prose prose-lg max-w-none space-y-6 text-gray-700 leading-relaxed" style={{ fontSize: '15px' }}>
-            <p style={{ fontSize: '15px' }}>
-              हिंदुस्थान पोस्ट निष्पक्ष, न्यायसंगत और विश्वसनीय समाचारों का पटल है। हम विभिन्न मु्द्दों पर सटीक विश्लेषण और देश की सुरक्षा व जनसामान्य के समाचारों को रखने का माध्यम हैं। हम एक ऐसे वैभवशाली हिंदुस्थान में विश्वास रखते हैं जो अपने गौरवशाली विरासत को आगे बढ़ाते हुए विश्व में समृद्धशाली हो और नेतृत्व की क्षमता रखता हो।
-            </p>
-            <p style={{ fontSize: '15px' }}>
-              सुरक्षा देश की रीढ़ है, राजनीति विचारों और नीतिगत निर्णयों का माध्यम है, समाज धरा का उत्कर्ष है और अर्थव्यवस्था देश के विकास का मानक व संसाधन विकास संपन्न हिंदुस्थान की परिकल्पना का साकार रूप है। हम इन्हीं सभी स्तंभों की सम्यक जानकारी, विश्लेषण उनसे उठनेवाली बहस के साथ-साथ आम जनमानस की वाणी के संवाहक हैं। हमारा प्रयत्न है कि हम अप्रबल की वाणी बनें, विभिन्न विचारों और बहस के लिए मंच दें और प्रबुद्ध समाज की वैचारिक क्षमताओं को वैश्विक पटल तक ले जाएं।
-            </p>
-            <p style={{ fontSize: '15px' }}>
-              हम लीक से हटकर समाज की नसों को पकड़ने, सत्य के तथ्यों को जानने, गंभीर मुद्दों पर शोध करने, जनादेश के संदेश और वैचारिक क्रांति के प्रस्तुतिकरण के लिए अपने आपको निवेश करने के लिए प्रतिबद्ध हैं। हमारा लक्ष्य है कि जो तथ्यहीन है वो सच नहीं है और जो सच है उसे हम दबने नहीं देंगे।
-            </p>
+            <div className="mb-6">
+              <p className="font-bold mb-4" style={{ fontSize: '15px' }}>Limitation of liability</p>
+              <p style={{ fontSize: '15px' }}>
+                The contents of this website have been prepared with utmost care. Nevertheless, the provider cannot accept any liability for the correctness, completeness and topicality of the contents provided. The use of the accessible contents is at the user's own risk. Articles labelled with the author's name reflect the opinion of the respective author, which does not necessarily correspond to the opinion of the provider.
+              </p>
+            </div>
+
+            <div className="mb-6">
+              <p style={{ fontSize: '15px' }}>
+                The author hereby expressly declares that no illegal, plagiarized or copied, insensitive material have been placed on <strong>Hindusthan Post</strong> and author who is posting the text, but not the organization or website, would be held liable in case of any breach.
+              </p>
+            </div>
+
+            <div className="mb-6">
+              <p style={{ fontSize: '15px' }}>
+                Liability for illegal, incorrect or incomplete contents and, in particular, for any damage resulting from the use of or failure to use information which is proffered in this manner shall be borne solely by the party described as post author offering the page to which the link refers, and not by the organization or the brand providing the platform to insert articles.
+              </p>
+            </div>
+
+            <div className="mb-6">
+              <p style={{ fontSize: '15px' }}>
+                <strong>Hindusthan Post</strong> works on core principle of Journalism, where author by posting any material on <strong>Hindusthan Post</strong> hereby agrees to follow these core principles diligently. Which are as follows:
+              </p>
+              <ul className="list-disc pl-6 space-y-2 mt-4" style={{ fontSize: '15px' }}>
+                <li>Originality, Truth and Accuracy</li>
+                <li>Independence and Neutrality</li>
+                <li>Humanity</li>
+                <li>Accountability</li>
+              </ul>
+            </div>
 
             {/* WhatsApp Community Button */}
             <div className="mt-8 mb-8">
@@ -128,3 +149,4 @@ export default function AboutUs() {
     </div>
   )
 }
+

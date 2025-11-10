@@ -4,11 +4,11 @@ export default function Footer() {
       <div className="container" style={{ display: 'flex', justifyContent: 'space-between' }}>
         <div>© {new Date().getFullYear()} Hindustanpost</div>
         <div className="flex gap-4 ">
-          <a href="/about">About</a>
-          <a href="/contact">Contact</a>
-          <a href="/disclaimer">Disclaimer</a>
-          <a href="/terms">Terms of Service</a>
-          <a href="/privacy">Privacy Policy</a>
+          <a href="/about" className="text-white hover:text-gray-300 font-normal text-[13px]">About</a>
+          <a href="/contact" className="text-white hover:text-gray-300 font-normal text-[13px]">Contact</a>
+          <a href="/disclaimer" className="text-white hover:text-gray-300 font-normal text-[13px]">Disclaimer</a>
+          <a href="/terms" className="text-white hover:text-gray-300 font-normal text-[13px]">Terms of Service</a>
+          <a href="/privacy" className="text-white hover:text-gray-300 font-normal text-[13px]">Privacy Policy</a>
         </div>
       </div>
     </footer>
