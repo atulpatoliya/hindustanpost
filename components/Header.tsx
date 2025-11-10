@@ -52,7 +52,13 @@ export default function Header() {
         <div className="">
           <nav className="flex items-center gap-4 overflow-x-auto py-3 text-base text-black justify-center">            
             {categories.map((c: string) => (
-              <Link key={c} href={`/category/${c}`} className="capitalize px-3 py-1 hover:text-black whitespace-nowrap font-bold">{c}</Link>
+              <Link 
+                key={c} 
+                href={c === 'वेब स्टोरी' ? '/web-stories' : `/category/${c}`} 
+                className="capitalize px-3 py-1 hover:text-black whitespace-nowrap font-bold"
+              >
+                {c}
+              </Link>
             ))}
           </nav>
         </div>

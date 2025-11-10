@@ -30,23 +30,23 @@ export default function ArticlesPage() {
   return (
     <div className="py-6">
       {/* Breadcrumb Navigation */}
-      <nav className="mb-6 text-sm">
+      <nav className="mb-6 text-sm" style={{ fontSize: '15px' }}>
         <ol className="flex items-center gap-2 text-gray-600">
           <li>
-            <Link href="/" className="hover:text-black transition-colors">Home</Link>
+            <Link href="/" className="hover:text-black transition-colors">होम</Link>
           </li>
           <li className="text-gray-400">/</li>
-          <li className="text-gray-800">All Articles</li>
+          <li className="text-gray-800">सभी समाचार</li>
         </ol>
       </nav>
 
       {/* Page Header */}
       <div className="mb-8">
         <div className="flex items-center gap-4 mb-4">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900">All Articles</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900">सभी समाचार</h1>
           <div className="flex-1 border-t-2 border-[#C2185B]" />
-          <div className="text-sm text-gray-600">
-            {allArticles.length} {allArticles.length === 1 ? 'Article' : 'Articles'}
+          <div className="text-sm text-gray-600" style={{ fontSize: '15px' }}>
+            {allArticles.length} {allArticles.length === 1 ? 'समाचार' : 'समाचार'}
           </div>
         </div>
       </div>
@@ -97,7 +97,7 @@ export default function ArticlesPage() {
           {/* Other Articles Grid */}
           {otherArticles.length > 0 && (
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Latest News</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">ताज़ा खबरें</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {otherArticles.map((article) => (
                   <Link
@@ -141,8 +141,8 @@ export default function ArticlesPage() {
         <aside className="lg:col-span-4">
           {/* Latest News Section */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-[#C2185B]">
-              Latest News
+            <h2 className="text-xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-[#C2185B]" style={{ fontSize: '15px' }}>
+              ताज़ा खबरें
             </h2>
             <div className="space-y-4">
               {latestArticles.map((item) => (
@@ -177,29 +177,31 @@ export default function ArticlesPage() {
 
           {/* Newsletter/Subscribe Section */}
           <div className="bg-gradient-to-br from-[#C2185B] to-[#A0144A] rounded-lg shadow-sm p-6 text-white">
-            <h2 className="text-xl font-bold mb-2">Subscribe to Newsletter</h2>
-            <p className="text-sm mb-4 opacity-90">
-              Get the latest news and updates delivered to your inbox.
+            <h2 className="text-xl font-bold mb-2" style={{ fontSize: '15px' }}>न्यूज़लेटर सब्सक्राइब करें</h2>
+            <p className="text-sm mb-4 opacity-90" style={{ fontSize: '15px' }}>
+              अपने इनबॉक्स में नवीनतम समाचार और अपडेट प्राप्त करें।
             </p>
             <form className="space-y-3">
               <input
                 type="email"
-                placeholder="Enter your email"
+                placeholder="अपना ईमेल दर्ज करें"
                 className="w-full px-4 py-2 rounded-md text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+                style={{ fontSize: '15px' }}
               />
               <button
                 type="submit"
                 className="w-full bg-white text-[#C2185B] px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition-colors text-sm"
+                style={{ fontSize: '15px' }}
               >
-                Subscribe
+                सब्सक्राइब करें
               </button>
             </form>
           </div>
 
           {/* Category Links */}
           <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-[#C2185B]">
-              Categories
+            <h2 className="text-xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-[#C2185B]" style={{ fontSize: '15px' }}>
+              श्रेणियाँ
             </h2>
             <div className="flex flex-wrap gap-2">
               {uniqueCategories.map((cat) => (

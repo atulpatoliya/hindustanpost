@@ -52,10 +52,10 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   return (
     <div className="py-6">
       {/* Breadcrumb Navigation */}
-      <nav className="mb-6 text-sm">
+      <nav className="mb-6 text-sm" style={{ fontSize: '15px' }}>
         <ol className="flex items-center gap-2 text-gray-600">
           <li>
-            <Link href="/" className="hover:text-black transition-colors">Home</Link>
+            <Link href="/" className="hover:text-black transition-colors">होम</Link>
           </li>
           <li className="text-gray-400">/</li>
           <li>
@@ -98,7 +98,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
-              <span>Hindustanpost Editorial</span>
+              <span>हिंदुस्थान पोस्ट संपादकीय</span>
             </div>
           </div>
 
@@ -137,10 +137,11 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           {/* Tags/Categories */}
           <div className="mt-8 pt-6 border-t border-gray-200">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm font-semibold text-gray-700">Tags:</span>
+              <span className="text-sm font-semibold text-gray-700" style={{ fontSize: '15px' }}>टैग:</span>
               <Link 
                 href={`/category/${article.category}`}
                 className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-gray-200 transition-colors capitalize"
+                style={{ fontSize: '15px' }}
               >
                 {article.category}
               </Link>
@@ -150,7 +151,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           {/* Related Articles Section */}
           {relatedArticles.length > 0 && (
             <div className="mt-12 pt-8 border-t border-gray-300">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Related Articles</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">संबंधित समाचार</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {relatedArticles.map((related) => (
                   <Link 
@@ -188,8 +189,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
         <aside className="lg:col-span-4">
           {/* Latest News Section */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-[#C2185B]">
-              Latest News
+            <h2 className="text-xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-[#C2185B]" style={{ fontSize: '15px' }}>
+              ताज़ा खबरें
             </h2>
             <div className="space-y-4">
               {latestArticles.map((item, index) => (
@@ -224,21 +225,23 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
           {/* Newsletter/Subscribe Section */}
           <div className="bg-gradient-to-br from-[#C2185B] to-[#A0144A] rounded-lg shadow-sm p-6 text-white">
-            <h2 className="text-xl font-bold mb-2">Subscribe to Newsletter</h2>
-            <p className="text-sm mb-4 opacity-90">
-              Get the latest news and updates delivered to your inbox.
+            <h2 className="text-xl font-bold mb-2" style={{ fontSize: '15px' }}>न्यूज़लेटर सब्सक्राइब करें</h2>
+            <p className="text-sm mb-4 opacity-90" style={{ fontSize: '15px' }}>
+              अपने इनबॉक्स में नवीनतम समाचार और अपडेट प्राप्त करें।
             </p>
             <form className="space-y-3">
               <input
                 type="email"
-                placeholder="Enter your email"
+                placeholder="अपना ईमेल दर्ज करें"
                 className="w-full px-4 py-2 rounded-md text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+                style={{ fontSize: '15px' }}
               />
               <button
                 type="submit"
                 className="w-full bg-white text-[#C2185B] px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition-colors text-sm"
+                style={{ fontSize: '15px' }}
               >
-                Subscribe
+                सब्सक्राइब करें
               </button>
             </form>
           </div>
