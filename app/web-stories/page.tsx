@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import nextDynamic from 'next/dynamic';
-import { useMemo, Suspense } from 'react';
+import { useMemo, Suspense, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { WEB_STORIES_LIST } from '../../data/webstories';
 
@@ -104,6 +104,22 @@ function WebStoriesContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeSlug = useMemo(() => searchParams.get('story'), [searchParams]);
+  const hasFetchedRef = useRef(false);
+
+  // useEffect(() => {
+  //   if (hasFetchedRef.current) return;
+  //   hasFetchedRef.current = true;
+
+  //   (async () => {
+  //     try {
+  //       const response = await fetch('/api/web-stories', { cache: 'no-store' });
+  //       const data = await response.json();
+  //       console.log('Data from /api/web-stories:', data);
+  //     } catch (err) {
+  //       console.error('Failed to fetch /api/web-stories:', err);
+  //     }
+  //   })();
+  // }, []);
 
   const openStory = (slug: string) => {
     const params = new URLSearchParams(Array.from(searchParams.entries()));

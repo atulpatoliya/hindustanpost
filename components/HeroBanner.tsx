@@ -1,5 +1,5 @@
+import { Article } from '@/types/article'
 import NewsTile from './NewsTile'
-import { Article } from '../lib/articles'
 
 type Props = {
   featured?: Article
@@ -8,7 +8,7 @@ type Props = {
 }
 
 export default function HeroBanner({ featured, left = [], right = [] }: Props) {
-  if (!featured && !left.length && !right.length) {
+  if (!featured || !left.length || !right.length) {
     return (
       <section className="bg-gray-100 p-6 rounded-lg">
         <h2 className="text-2xl font-semibold mb-2">Top story</h2>
@@ -22,7 +22,7 @@ export default function HeroBanner({ featured, left = [], right = [] }: Props) {
       {/* Left stacked small tiles (2) */}
       <div className="hidden lg:flex lg:flex-col lg:gap-4 lg:col-span-3">
         {left.slice(0, 2).map(a => (
-          <NewsTile key={a.slug} article={a} size="small" />
+          <NewsTile key={a?._id} article={a} size="small" />
         ))}
       </div>
 
@@ -34,7 +34,7 @@ export default function HeroBanner({ featured, left = [], right = [] }: Props) {
       {/* Right stacked small tiles (2) */}
       <div className="hidden lg:flex lg:flex-col lg:gap-4 lg:col-span-3">
         {right.slice(0, 2).map(a => (
-          <NewsTile key={a.slug} article={a} size="small" />
+          <NewsTile key={a?._id} article={a} size="small" />
         ))}
       </div>
     </section>

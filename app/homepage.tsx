@@ -1,22 +1,30 @@
-import HeroBanner from '../components/HeroBanner'
+import HeroBanner from "../components/HeroBanner";
 // NewsTile import intentionally removed (not used in this layout)
-import FeaturedVideoSection from '../components/FeaturedVideoSection'
-import RajDarbarSection from '../components/RajDarbarSection'
-import PhotoGallerySection from '../components/PhotoGallerySection'
-import SocialSection from '../components/SocialSection'
-import SpecialSection from '../components/SpecialSection'
-import LifestyleSection from '../components/LifestyleSection'
-import BreakingMarquee from '../components/BreakingMarquee'
-import { getAllArticles } from '../lib/articles'
+import FeaturedVideoSection from "../components/FeaturedVideoSection";
+import RajDarbarSection from "../components/RajDarbarSection";
+import PhotoGallerySection from "../components/PhotoGallerySection";
+import SocialSection from "../components/SocialSection";
+import SpecialSection from "../components/SpecialSection";
+import LifestyleSection from "../components/LifestyleSection";
+import BreakingMarquee from "../components/BreakingMarquee";
+import { getAllArticles } from "../lib/articles";
+import getInternalBaseUrl from "../lib/getInternalBaseUrl";
 
-export default function HomePage() {
-  const all = getAllArticles()
-  const featured = all[0]
-  // Choose side tiles: next 4 articles
-  const left = all.slice(1, 3)
-  const right = all.slice(3, 5)
-  
-  // latest array previously used for sidebar; removed per design change
+export default async function HomePage() {
+  try {
+    const baseUrl = await getInternalBaseUrl();
+    const response = await fetch(`${baseUrl}/api/post`, { cache: "no-store" });
+    var apiData = await response.json();
+    // console.log('Data from /api/post:', apiData)
+  } catch (err) {
+    console.error("Failed to fetch /api/post:", err);
+  }
+
+  const all = apiData?.data?.posts || [];
+  const featured = all[0];
+  const left = all.slice(1, 3);
+  const right = all.slice(3, 5);
+
   return (
     <section>
       {/* Breaking news marquee above the hero banner */}
@@ -24,23 +32,23 @@ export default function HomePage() {
 
       <HeroBanner featured={featured} left={left} right={right} />
 
-  {/* Featured video / second section (static design) */}
-  <FeaturedVideoSection />
+      {/* Featured video / second section (static design) */}
+      <FeaturedVideoSection />
 
-    {/* RajDarbar — third static section */}
-    <RajDarbarSection />
+      {/* RajDarbar — third static section */}
+      <RajDarbarSection posts={all} />
 
-  {/* Photo gallery — fourth static section */}
-  <PhotoGallerySection />
+      {/* Photo gallery — fourth static section */}
+      <PhotoGallerySection posts={all} />
 
-  {/* Social (5th) — posts from the 'social' category */}
-  <SocialSection />
+      {/* Social (5th) — posts from the 'social' category */}
+      <SocialSection />
 
-  {/* Special (6th) — static list with sidebar widgets */}
-  <SpecialSection />
+      {/* Special (6th) — static list with sidebar widgets */}
+      <SpecialSection />
 
-  {/* Lifestyle (7th) — posts from 'lifestyle' category (fallback demo if empty) */}
-  <LifestyleSection />
+      {/* Lifestyle (7th) — posts from 'lifestyle' category (fallback demo if empty) */}
+      <LifestyleSection />
 
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* <div className="lg:col-span-12">
@@ -73,5 +81,5 @@ export default function HomePage() {
         {/* Latest sidebar removed per request */}
       </div>
     </section>
-  )
+  );
 }
