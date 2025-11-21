@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Article } from "@/types/article";
+import { Article, ArticleCategory } from "@/types/article";
 import { formatDate } from "@/lib/formatDate";
 
 type Props = {
@@ -8,10 +8,14 @@ type Props = {
 };
 
 export default function RajDarbarSection({ posts = [] }: Props) {
-  const items = posts.slice(5, 10);
-  const hasItems = items && items?.length > 0;
+  const specialPosts = posts?.filter((post: Article) =>
+    post.categories?.some((cat: ArticleCategory) =>
+      ["raj-darbar", "newraaj-drbaar"].includes(cat?.slug?.toLowerCase())
+    )
+  );
+  const items = specialPosts?.slice(0, 5);
 
-  if (!hasItems) {
+  if (!specialPosts?.length) {
     return (
       <section className="mt-8">
         <div className="container">
@@ -37,12 +41,13 @@ export default function RajDarbarSection({ posts = [] }: Props) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {items &&
+            items?.length > 0 &&
             items?.map((item) => {
               const date = formatDate(item?.publishDate);
 
               return (
                 <article
-                  key={item?.seo?.slug}
+                  key={item?._id}
                   className="bg-white rounded shadow-md overflow-hidden"
                 >
                   <div className="w-full h-40 relative">
@@ -57,7 +62,7 @@ export default function RajDarbarSection({ posts = [] }: Props) {
                   <div className="p-3">
                     <h3 className="text-sm leading-snug mb-2 line-clamp-3">
                       <Link
-                        href={`/articles/${item?.seo?.slug}`}
+                        href={`/articles/${item?._id}`}
                         className="text-gray-900 hover:text-blue-600"
                       >
                         {item?.title || "अनाम लेख"}

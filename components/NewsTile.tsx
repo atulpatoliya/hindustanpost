@@ -1,23 +1,21 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Article } from '@/types/article';
+import { isExternal } from '@/lib/isExternal';
 
-function isExternal(src?: string) {
-  if (!src) return false
-  return /^https?:\/\//.test(src) || src.startsWith('data:')
-}
 
 export default function NewsTile({ article, size = 'small', className = '' }: { article: Article; size?: 'small' | 'large' | 'compact'; className?: string }) {
   if (!article) return null
+  
   if (size === 'large') {
     return (
-      <Link href={`/articles/${article.seo?.slug}`} className={`group block bg-white rounded overflow-hidden shadow-sm ${className}`}>
+      <Link href={`/articles/${article._id}`} className={`group block bg-white rounded overflow-hidden shadow-sm ${className}`}>
         {article && (
           <div className="w-full h-[400px] relative overflow-hidden">
             <Image className="transition-transform duration-300 ease-out group-hover:scale-105" src={article?.featuredImage || '/fallback.png'} alt={article?.title} fill style={{ objectFit: 'cover' }} unoptimized={isExternal(article?.featuredImage || '/fallback.png')} />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
               <div className="p-6">
-                <div className="text-[10px] text-white mb-1 capitalize bg-black/70 inline-block px-2 py-1 rounded">{article?.categories[0]?.name}</div>
+                <div className="text-[10px] text-white mb-1 capitalize bg-black/70 inline-block px-2 py-1 rounded">{article?.categories?.[0]?.name}</div>
                 <h3 className="text-[19px] font-bold line-clamp-3 text-white">{article.title}</h3>
                 {/* {article.description && <p className="mt-2 text-gray-200 line-clamp-2">{article.description}</p>} */}
                 {/* <div className="mt-3 text-sm text-gray-300">{article.publishedAt}</div> */}
@@ -32,7 +30,7 @@ export default function NewsTile({ article, size = 'small', className = '' }: { 
   // small tile
   if (size === 'compact') {
     return (
-      <Link href={`/articles/${article?.seo?.slug}`} className={`group flex items-start gap-3 bg-white rounded overflow-hidden ${className}`}>
+      <Link href={`/articles/${article?._id}`} className={`group flex items-start gap-3 bg-white rounded overflow-hidden ${className}`}>
         {article && (
           <div className="w-20 h-14 relative flex-shrink-0 overflow-hidden">
             <Image className="transition-transform duration-300 ease-out group-hover:scale-105" src={article?.featuredImage} alt={article?.title} fill style={{ objectFit: 'cover' }} unoptimized={isExternal(article?.featuredImage)} />
@@ -40,7 +38,7 @@ export default function NewsTile({ article, size = 'small', className = '' }: { 
           </div>
         )}
         <div className="py-1 pr-2">
-          <div className="text-xs text-blue-600 mb-1 capitalize">{article?.categories[0]?.name}</div>
+          <div className="text-xs text-blue-600 mb-1 capitalize">{article?.categories?.[0]?.name}</div>
           <div className="text-sm font-medium line-clamp-2">{article.title}</div>
           <div className="text-xs text-gray-500 mt-1">{article?.publishDate}</div>
         </div>
@@ -49,13 +47,13 @@ export default function NewsTile({ article, size = 'small', className = '' }: { 
   }
 
   return (
-    <Link href={`/articles/${article?.seo?.slug}`} className={`group block bg-white rounded overflow-hidden shadow-sm ${className}`}>
+    <Link href={`/articles/${article?._id}`} className={`group block bg-white rounded overflow-hidden shadow-sm ${className}`}>
       {article && (
         <div className="w-full h-[192px] relative overflow-hidden">
           <Image className="transition-transform duration-300 ease-out group-hover:scale-105" src={article?.featuredImage || '/fallback.png'} alt={article?.title} fill style={{ objectFit: 'cover' }} unoptimized={isExternal(article?.featuredImage || '/fallback.png')} />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
             <div className="p-3">
-              <div className=" text-white mb-1 capitalize bg-black/70 inline-block px-2 py-0.5 rounded text-[10px]">{article?.categories[0]?.name}</div>
+              <div className=" text-white mb-1 capitalize bg-black/70 inline-block px-2 py-0.5 rounded text-[10px]">{article?.categories?.[0]?.name}</div>
               <h4 className="text-sm font-semibold line-clamp-2 text-white">{article?.title}</h4>
             </div>
           </div>

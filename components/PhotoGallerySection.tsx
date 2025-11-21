@@ -8,7 +8,7 @@ type Props = {
 };
 
 export default function PhotoGallerySection({ posts = [] }: Props) {
-  const items = posts.slice(1, 16);
+  const items = posts.slice(0, 16);
   const [featured, ...rest] = items;
   const restItems = rest.slice(0, 3);
   const hasItems = Boolean(featured);
@@ -57,14 +57,17 @@ export default function PhotoGallerySection({ posts = [] }: Props) {
                   />
                 )}
               </div>
-              <div className="absolute left-0 right-0 bottom-0 bg-black/60 text-white p-6">
+              <Link
+                href={`/articles/${featured?._id}`}
+                className="absolute left-0 right-0 bottom-0 bg-black/60 text-white p-6"
+              >
                 {featured?.title && (
                   <h3 className="text-2xl font-bold line-clamp-2">
                     {featured?.title || "अनाम लेख"}
                   </h3>
                 )}
                 <div className="text-sm mt-2">{featuredDate}</div>
-              </div>
+              </Link>
             </div>
           </div>
 
@@ -75,7 +78,7 @@ export default function PhotoGallerySection({ posts = [] }: Props) {
                   const date = formatDate(item?.publishDate);
                   return (
                     <div
-                      key={item?.seo?.slug}
+                      key={item?._id}
                       className="flex gap-3 items-start bg-white/80 p-3 rounded"
                     >
                       <div className="w-20 h-14 relative flex-shrink-0 rounded overflow-hidden">
@@ -90,7 +93,7 @@ export default function PhotoGallerySection({ posts = [] }: Props) {
                       <div className="flex-1">
                         <h4 className="text-sm font-semibold line-clamp-2">
                           <Link
-                            href={`/articles/${item?.seo?.slug}`}
+                            href={`/articles/${item?._id}`}
                             className="text-black hover:text-blue-700"
                           >
                             {item?.title || "अनाम लेख"}

@@ -1,34 +1,35 @@
 import Link from "next/link";
 import Image from "next/image";
 import getInternalBaseUrl from "@/lib/getInternalBaseUrl";
-import { Article, HtmlContent } from "@/types/article";
+import { Article, ArticleCategory, HtmlContent } from "@/types/article";
 import { toHtmlContent } from "@/lib/toHtmlContent";
 import { getAllCategories } from "@/lib/categories";
+import { isExternal } from "@/lib/isExternal";
 
-function isExternal(src?: string) {
-  if (!src) return false;
-  return /^https?:\/\//.test(src) || src.startsWith("data:");
-}
+export const revalidate = 120;
 
 export default async function ArticlesPage() {
   let apiResponse: { data?: { posts?: Article[] } } | null = null;
-
+  let categoryData = [];
   try {
     const baseUrl = await getInternalBaseUrl();
-    const response = await fetch(`${baseUrl}/api/post`, { cache: "no-store" });
+    const response = await fetch(`${baseUrl}/api/post`, {
+      next: { revalidate: 120 },
+    });
     const category = await fetch(`${baseUrl}/api/category`, {
-      cache: "no-store",
+      next: { revalidate: 300 },
     });
     apiResponse = await response.json();
-    const categoryResponse = await category.json();
-    // console.log(categoryResponse, "categoryResponse");
-    console.log(apiResponse, "apiResponse");
+    const { data } = await category.json();
+    categoryData = Array.isArray(data) ? data : [];
   } catch (err) {
-    console.error("Failed to fetch /api/post:", err);
+    if (process.env.NODE_ENV !== "production") {
+      console.error("Failed to fetch /api/post:", err);
+    }
   }
 
   const articles: Article[] = Array.isArray(apiResponse?.data?.posts)
-    ? apiResponse!.data!.posts
+    ? apiResponse!.data!.posts.filter(Boolean)
     : [];
   const sortedArticles = [...articles].sort((a, b) => {
     return (
@@ -48,7 +49,6 @@ export default async function ArticlesPage() {
 
   // Get latest articles for sidebar
   const latestArticles = sortedArticles.slice(0, 6);
-
   return (
     <div className="py-6">
       {/* Breadcrumb Navigation */}
@@ -84,7 +84,7 @@ export default async function ArticlesPage() {
           {featured && (
             <div className="mb-8">
               <Link
-                href={`/articles/${featured?.seo?.slug}`}
+                href={`/articles/${featured?._id}`}
                 className="group block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow"
               >
                 {featured && (
@@ -138,7 +138,7 @@ export default async function ArticlesPage() {
                 {otherArticles?.map((article) => (
                   <Link
                     key={article._id}
-                    href={`/articles/${article.seo?.slug}`}
+                    href={`/articles/${article._id}`}
                     className="group block bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
                   >
                     {article.featuredImage && (
@@ -194,7 +194,7 @@ export default async function ArticlesPage() {
               {latestArticles?.map((item) => (
                 <Link
                   key={item._id}
-                  href={`/articles/${item?.seo?.slug}`}
+                  href={`/articles/${item?._id}`}
                   className="group flex gap-3 pb-4 border-b border-gray-100 last:border-0 last:pb-0"
                 >
                   {item.featuredImage && (
@@ -260,13 +260,13 @@ export default async function ArticlesPage() {
               श्रेणियाँ
             </h2>
             <div className="flex flex-wrap gap-2">
-              {uniqueCategories.map((cat) => (
+              {categoryData.map((cat: ArticleCategory) => (
                 <Link
-                  key={cat}
-                  href={`/category/${cat}`}
+                  key={cat?._id}
+                  href={`/category/${cat?.slug}`}
                   className="px-4 py-2 rounded-md text-sm font-medium transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200"
                 >
-                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                  {cat?.name.charAt(0).toUpperCase() + cat?.name.slice(1)}
                 </Link>
               ))}
             </div>

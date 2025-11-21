@@ -10,8 +10,6 @@ export async function GET() {
 
     const response = await fetch(signedUrl, { cache: "no-store" });
     const data = await response.json();
-    console.log(signedUrl, "signedUrl");
-    console.log(data, "data");
 
     return NextResponse.json({ data: data?.data });
   } catch (err: any) {

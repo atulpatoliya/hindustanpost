@@ -7,33 +7,60 @@ import SocialSection from "../components/SocialSection";
 import SpecialSection from "../components/SpecialSection";
 import LifestyleSection from "../components/LifestyleSection";
 import BreakingMarquee from "../components/BreakingMarquee";
-import { getAllArticles } from "../lib/articles";
 import getInternalBaseUrl from "../lib/getInternalBaseUrl";
+import { ArticleCategory, Article } from "@/types/article";
+
+export const revalidate = 120;
 
 export default async function HomePage() {
+  let apiData: { data?: { posts?: Article[] } } | null = null;
   try {
     const baseUrl = await getInternalBaseUrl();
-    const response = await fetch(`${baseUrl}/api/post`, { cache: "no-store" });
-    var apiData = await response.json();
-    // console.log('Data from /api/post:', apiData)
+    const response = await fetch(`${baseUrl}/api/post`, {
+      next: { revalidate: 120 },
+    });
+    apiData = await response.json();
   } catch (err) {
-    console.error("Failed to fetch /api/post:", err);
+    if (process.env.NODE_ENV !== "production") {
+      console.error("Failed to fetch /api/post:", err);
+    }
   }
 
-  const all = apiData?.data?.posts || [];
-  const featured = all[0];
-  const left = all.slice(1, 3);
-  const right = all.slice(3, 5);
+  const all: Article[] = Array.isArray(apiData?.data?.posts)
+    ? apiData!.data!.posts.filter(Boolean)
+    : [];
+  const heroOrdered = [...all].sort((a, b) => {
+    const dateA = a?.publishDate ? new Date(a.publishDate).getTime() : 0;
+    const dateB = b?.publishDate ? new Date(b.publishDate).getTime() : 0;
+    return dateB - dateA;
+  });
+  const featured = heroOrdered[0];
+  const left = heroOrdered.slice(1, 3);
+  const right = heroOrdered.slice(3, 5);
+  const breakingPosts = [...all].sort(() => 0.5 - Math.random());
+  const featuredData = [...all]
+    .sort(() => 0.5 - Math.random())
+    .slice(0, all?.length);
+  const socialPosts = all.filter((post: any) =>
+    post.categories?.some(
+      (cat: ArticleCategory) => cat?.slug?.toLowerCase() === "social"
+    )
+  );
+  const lifestylePosts = all.filter((post: any) =>
+    post.categories?.some(
+      (cat: ArticleCategory) => cat?.slug?.toLowerCase() === "lifestyle"
+    )
+  );
 
   return (
     <section>
       {/* Breaking news marquee above the hero banner */}
-      <BreakingMarquee />
+      <BreakingMarquee posts={breakingPosts} />
 
       <HeroBanner featured={featured} left={left} right={right} />
 
       {/* Featured video / second section (static design) */}
-      <FeaturedVideoSection />
+      <FeaturedVideoSection data={featuredData} />
 
       {/* RajDarbar — third static section */}
       <RajDarbarSection posts={all} />
@@ -42,13 +69,13 @@ export default async function HomePage() {
       <PhotoGallerySection posts={all} />
 
       {/* Social (5th) — posts from the 'social' category */}
-      <SocialSection />
+      <SocialSection socialPosts={socialPosts} />
 
       {/* Special (6th) — static list with sidebar widgets */}
-      <SpecialSection />
+      <SpecialSection data={all} />
 
       {/* Lifestyle (7th) — posts from 'lifestyle' category (fallback demo if empty) */}
-      <LifestyleSection />
+      <LifestyleSection lifestylePosts={lifestylePosts} />
 
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* <div className="lg:col-span-12">
