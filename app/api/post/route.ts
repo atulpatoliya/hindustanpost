@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import getSignedUrl from "../../../lib/getSignedUrl";
 
-const BASE_BACKEND_URL = process.env.NEWS_BACKEND_BASE_URL;
+export const dynamic = 'force-dynamic'; 
 
+const BASE_BACKEND_URL = process.env.NEWS_BACKEND_BASE_URL;
 export async function GET(req: Request) {
   try {
     const { pathname } = new URL(req.url);
