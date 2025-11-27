@@ -31,6 +31,10 @@ export default async function Header() {
     year: "numeric",
   });
 
+  const filteredCategories = categories?.filter(
+    (category) => category && category.slug && !["6918761f9f2cc598904359c3", "6927042971f97cfca6ee1f57"].includes(category._id)
+  );
+
   return (
     <header className=" bg-white">
       {/* Main header: logo centered with date below */}
@@ -97,8 +101,8 @@ export default async function Header() {
       {/* Category nav */}
       <div className="border-t container border-black border-b">
         <div className="">
-          <nav className="flex items-center gap-4 overflow-x-auto py-3 text-base text-black justify-center">
-            {categories.map((category) => {
+          <nav className="grid gap-4 grid-flow-col overflow-x-auto py-3 text-base text-black scrollbar">
+            {filteredCategories.map((category, index) => {
               // const href =
               //   slug.toLowerCase() === "web-stories"
               //     ? "/web-stories"
@@ -108,7 +112,9 @@ export default async function Header() {
                 <Link
                   key={category?._id}
                   href={`/category/${category?.slug}`}
-                  className="capitalize px-3 py-1 hover:text-black whitespace-nowrap font-bold"
+                  className={`capitalize ${
+                    index !== 0 ? "px-3" : "px-0"
+                  } py-1 hover:text-black whitespace-nowrap font-bold`}
                 >
                   {category?.name}
                 </Link>
