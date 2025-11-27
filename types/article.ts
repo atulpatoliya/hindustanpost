@@ -1,9 +1,25 @@
+export interface categoryId {
+  _id: string
+  name: string
+  slug: string
+  createdAt: string
+  createdBy: string
+  updatedAt: string
+  updatedBy: string
+  status: string
+  isDeleted: boolean
+  parentId: string | null
+  type: string
+}
+
 export interface ArticleCategory {
   _id: string
   name: string
+  labelName?: string
   status: string
   slug: string
   parentId: string | null
+  categoriesId: categoryId
 }
 
 export interface ArticleTag {

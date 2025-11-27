@@ -40,7 +40,6 @@ export default async function ArticlesPage() {
   // Featured article (first one)
   const featured = sortedArticles[0];
   const otherArticles = sortedArticles.slice(1);
-
   // // Get all unique categories
   // const articleCategories = Array.from(new Set(allArticles.map(a => a.category))).sort()
   const allCategories = getAllCategories();
@@ -263,10 +262,13 @@ export default async function ArticlesPage() {
               {categoryData.map((cat: ArticleCategory) => (
                 <Link
                   key={cat?._id}
-                  href={`/category/${cat?.slug}`}
+                  href={`/category/${cat?.categoriesId?.slug}`}
                   className="px-4 py-2 rounded-md text-sm font-medium transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200"
                 >
-                  {cat?.name.charAt(0).toUpperCase() + cat?.name.slice(1)}
+                  {cat &&
+                    cat?.labelName &&
+                    cat?.labelName.charAt(0).toUpperCase() +
+                      cat?.labelName.slice(1)}
                 </Link>
               ))}
             </div>

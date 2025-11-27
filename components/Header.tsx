@@ -32,9 +32,8 @@ export default async function Header() {
   });
 
   const filteredCategories = categories?.filter(
-    (category) => category && category.slug && !["6918761f9f2cc598904359c3", "6927042971f97cfca6ee1f57"].includes(category._id)
+    (category) => category && category?.categoriesId?.slug && !["6918761f9f2cc598904359c3", "6927042971f97cfca6ee1f57"].includes(category._id)
   );
-
   return (
     <header className=" bg-white">
       {/* Main header: logo centered with date below */}
@@ -111,12 +110,12 @@ export default async function Header() {
               return (
                 <Link
                   key={category?._id}
-                  href={`/category/${category?.slug}`}
+                  href={`/category/${category?.categoriesId?.slug}`}
                   className={`capitalize ${
                     index !== 0 ? "px-3" : "px-0"
                   } py-1 hover:text-black whitespace-nowrap font-bold`}
                 >
-                  {category?.name}
+                  {category?.labelName || category?.name}
                 </Link>
               );
             })}

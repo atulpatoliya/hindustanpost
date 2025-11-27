@@ -75,7 +75,7 @@ export default async function CategoryPage({
     .slice(0, 6);
 
   const categoryMeta = allCategories.find(
-    (cat) => cat.slug?.toLowerCase() === categorySlug
+    (cat) => cat?.categoriesId?.slug?.toLowerCase() === categorySlug
   );
   const uniqueCategories = allCategories;
 
@@ -166,7 +166,7 @@ export default async function CategoryPage({
           {otherArticles.length > 0 && (
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                अधिक {categoryMeta?.name || categorySlug} समाचार
+                अधिक {categoryMeta?.labelName || categoryMeta?.name || categorySlug} समाचार
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {otherArticles.map((article) => (
@@ -298,14 +298,14 @@ export default async function CategoryPage({
               {uniqueCategories.map((cat) => (
                 <Link
                   key={cat._id}
-                  href={`/category/${cat.slug}`}
+                  href={`/category/${cat?.categoriesId?.slug}`}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    cat.slug?.toLowerCase() === categorySlug
+                    cat?.categoriesId?.slug?.toLowerCase() === categorySlug
                       ? "bg-[#C2185B] text-white"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
-                  {cat.name}
+                  {cat?.labelName || cat.name}
                 </Link>
               ))}
               {!uniqueCategories.length && (
