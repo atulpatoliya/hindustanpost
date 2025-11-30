@@ -2,12 +2,12 @@ services:
   web:
     build:
       context: .
-      args:
-        NEXT_PUBLIC_BASE_URL: "http://18.206.193.133:3000"
-        NEWS_BACKEND_BASE_URL: "http://18.206.193.133:8081"
-        SIGNED_URL_SECRET: "WordpressToNodejsAndAngularSignedUrlSecret"
     container_name: hindustan-post
     image: patelrushit/hindustan-post-image:latest
+    environment:
+      NEXT_PUBLIC_BASE_URL: "http://18.206.193.133:3000"
+      NEWS_BACKEND_BASE_URL: "http://18.206.193.133:8081"
+      SIGNED_URL_SECRET: "WordpressToNodejsAndAngularSignedUrlSecret"
     ports:
       - "3000:3000"
     restart: always
