@@ -102,15 +102,15 @@ export default async function Header() {
         <div className="">
           <nav className="grid gap-4 grid-flow-col overflow-x-auto py-3 text-base text-black scrollbar">
             {filteredCategories.map((category, index) => {
-              // const href =
-              //   slug.toLowerCase() === "web-stories"
-              //     ? "/web-stories"
-              //     : `/category/${slug}`;
+              const href =
+                category?.categoriesId?.slug?.toLowerCase() === "web-stories"
+                  ? "/web-stories"
+                  : `/category/${category?.categoriesId?.slug}`;
 
               return (
                 <Link
                   key={category?._id}
-                  href={`/category/${category?.categoriesId?.slug}`}
+                  href={href}
                   className={`capitalize ${
                     index !== 0 ? "px-3" : "px-0"
                   } py-1 hover:text-black whitespace-nowrap font-bold`}

@@ -26,7 +26,9 @@ const WEB_STORIES: Record<string, WebStory> = WEB_STORIES_LIST.reduce((acc, s) =
     title: s.title,
     image: s.image,
     slides: [
-      { image: s.image, title: s.title },
+      { image: s.image, title: s.title, description: "This is the first slide of the story." },
+      { image: s.image, title: "Second Slide", description: "This is the second slide to test navigation." },
+      { image: s.image, title: "Third Slide", description: "This is the third slide. The story ends here." },
     ]
   }
   return acc
