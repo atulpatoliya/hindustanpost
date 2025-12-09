@@ -1,4 +1,8 @@
-
+export interface StoryImage {
+  url: string;
+  name?: string;
+  description?: string;
+}
 export interface Story {
   _id: string;
   title: string;
@@ -15,7 +19,7 @@ export interface Story {
   status: 'active' | 'draft' | 'archived';
   permaLink?: string;
   slug?: string;
-  image?: string[];
+  image?: StoryImage[];
   posterImage?: string;
   logo?: string;
   backgroundAudio?: string;

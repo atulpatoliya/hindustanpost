@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Story } from '@/types/stories';
+import { Story, StoryImage } from '@/types/stories';
 
 type StorySlide = {
   image: string;
@@ -124,7 +124,7 @@ export default function WebStoryPage({ params }: { params: { slug: string } }) {
 
   const [touchStart, setTouchStart] = useState(0);
 
-  const currentSlideData = (slides && slides[currentSlide]) || '';
+  const currentSlideData = (slides && slides[currentSlide]) as StoryImage || '';
   const currentProgressPct = Math.min(
     100,
     Math.max(0, (progressMs / SLIDE_DURATION_MS) * 100)
@@ -148,7 +148,7 @@ export default function WebStoryPage({ params }: { params: { slug: string } }) {
           return;
         }
       }
-    } catch {}
+    } catch { }
     router.push('/web-stories');
   }
 
@@ -179,7 +179,7 @@ export default function WebStoryPage({ params }: { params: { slug: string } }) {
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0">
           <Image
-            src={currentSlideData || '/fallback.png'}
+            src={currentSlideData?.url || '/fallback.png'}
             alt='bg'
             fill
             style={{ objectFit: 'cover' }}
@@ -199,8 +199,8 @@ export default function WebStoryPage({ params }: { params: { slug: string } }) {
         ) : (
           <div className="relative w-full h-full md:aspect-[9/16] md:w-[min(92vw,420px)] md:max-h-[90vh] md:rounded-[28px] overflow-hidden md:shadow-[0_24px_70px_rgba(0,0,0,0.55)]">
             <Image
-              src={currentSlideData || '/fallback.png'}
-              alt={currentSlideData}
+              src={currentSlideData?.url || '/fallback.png'}
+              alt={currentSlideData?.name || 'story image'}
               fill
               style={{ objectFit: 'cover' }}
               className="brightness-95"
@@ -217,8 +217,8 @@ export default function WebStoryPage({ params }: { params: { slug: string } }) {
                   idx < currentSlide
                     ? 100
                     : idx === currentSlide
-                    ? currentProgressPct
-                    : 0;
+                      ? currentProgressPct
+                      : 0;
                 return (
                   <div key={idx} className="flex-1 h-1.5 bg-white/40 rounded">
                     <div
@@ -288,15 +288,14 @@ export default function WebStoryPage({ params }: { params: { slug: string } }) {
                 {!loadingStories ? (
                   <>
                     <h2 className="text-[26px] md:text-[30px] font-extrabold text-[#C2185B] text-center leading-tight">
-                      {stories?.title}
+                      {currentSlideData?.name}
                     </h2>
                     {stories?.description && (
                       <p className="text-[15px] text-gray-800 text-center mt-3">
-                        {/* {stories?.description} */}
                         <div
                           className="prose max-w-none"
                           dangerouslySetInnerHTML={{
-                            __html: stories?.description || '',
+                            __html: currentSlideData?.description || '',
                           }}
                         />
                       </p>
@@ -353,7 +352,7 @@ export default function WebStoryPage({ params }: { params: { slug: string } }) {
                           );
                           setCopied(true);
                           setTimeout(() => setCopied(false), 1500);
-                        } catch {}
+                        } catch { }
                       }}
                       className="flex flex-col items-center gap-2"
                     >
@@ -564,9 +563,8 @@ export default function WebStoryPage({ params }: { params: { slug: string } }) {
         {slides?.map((_, idx) => (
           <div
             key={idx}
-            className={`h-1.5 rounded-full transition-all ${
-              idx === currentSlide ? 'w-8 bg-white' : 'w-1.5 bg-white/50'
-            }`}
+            className={`h-1.5 rounded-full transition-all ${idx === currentSlide ? 'w-8 bg-white' : 'w-1.5 bg-white/50'
+              }`}
           />
         ))}
       </div>

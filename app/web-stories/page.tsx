@@ -51,8 +51,8 @@ function WebStoryCard({ story, onOpen }: WebStoryCardProps) {
               {typeof story?.author === 'object' && story?.author?.firstName
                 ? story.author.firstName
                 : typeof story?.author === 'string'
-                ? story.author
-                : 'Hindusthan Post'}
+                  ? story.author
+                  : 'Hindusthan Post'}
             </div>
             <div className="text-gray-400">
               {formatDate(story.publishedAt) || formatDate(story?.createdAt)}
@@ -167,6 +167,9 @@ function WebStoriesContent() {
     return <div className="p-8 text-center">Loading Web Stories...</div>;
   }
 
+  if (story?.length === 0) {
+    return <div className="p-8 text-center">No Web Stories found.</div>;
+  }
   return (
     <section className="mt-6">
       <div className="container">
@@ -249,7 +252,7 @@ function WebStoriesContent() {
                 Popular
               </div>
               <div className="p-4">
-               {!newsLoading ? (
+                {!newsLoading ? (
                   newsData?.slice(5, newsData?.length - 1).map((item, idx) => (
                     <LatestNewsItem
                       key={idx}
