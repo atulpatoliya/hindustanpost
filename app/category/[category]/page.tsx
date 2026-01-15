@@ -1,63 +1,118 @@
-import { getArticlesByCategory, getAllArticles } from '../../../lib/articles'
-import { getAllCategories } from '../../../lib/categories'
-import { notFound } from 'next/navigation'
-import NewsTile from '../../../components/NewsTile'
-import Link from 'next/link'
-import Image from 'next/image'
+import Link from "next/link";
+import Image from "next/image";
+import { notFound } from "next/navigation";
+import { isExternal } from "@/lib/isExternal";
+import getInternalBaseUrl from "@/lib/getInternalBaseUrl";
+import { Article, ArticleCategory } from "@/types/article";
+import { formatDate } from "@/lib/formatDate";
 
-function isExternal(src?: string) {
-  if (!src) return false
-  return /^https?:\/\//.test(src) || src.startsWith('data:')
-}
+export const revalidate = 120;
 
-export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
-  // Await params in Next.js 15+
-  const { category } = await params
-  
-  // Get articles for this category
-  const items = getArticlesByCategory(category)
-  
-  // If no articles found, show 404
-  if (!items.length) {
-    notFound()
+export default async function CategoryPage({
+  params,
+}: {
+  params: Promise<{ category: string }>;
+}) {
+  const { category } = await params;
+  const categorySlug = decodeURIComponent(category).toLowerCase();
+
+  let categoryPosts: Article[] = [];
+  let allPosts: Article[] = [];
+  let allCategories: ArticleCategory[] = [];
+
+  try {
+    const baseUrl = await getInternalBaseUrl();
+    const [categoryResponse, postsResponse, categoriesResponse] =
+      await Promise.all([
+        fetch(`${baseUrl}/api/category/${categorySlug}`, {
+          next: { revalidate: 120 },
+        }),
+        fetch(`${baseUrl}/api/post`, { next: { revalidate: 120 } }),
+        fetch(`${baseUrl}/api/category`, { next: { revalidate: 300 } }),
+      ]);
+
+    if (categoryResponse.ok) {
+      const categoryJson = (await categoryResponse.json()) as {
+        data?: { posts?: Article[] };
+      };
+      categoryPosts = Array.isArray(categoryJson?.data?.posts)
+        ? categoryJson.data!.posts!.filter(Boolean)
+        : [];
+    }
+
+    if (postsResponse.ok) {
+      const postsJson = (await postsResponse.json()) as {
+        data?: { posts?: Article[] };
+      };
+      allPosts = Array.isArray(postsJson?.data?.posts)
+        ? postsJson.data!.posts!.filter(Boolean)
+        : [];
+    }
+
+    if (categoriesResponse.ok) {
+      const categoriesJson = (await categoriesResponse.json()) as {
+        data?: ArticleCategory[];
+      };
+      allCategories = Array.isArray(categoriesJson?.data)
+        ? categoriesJson.data.filter(Boolean)
+        : [];
+    }
+  } catch (err) {}
+
+  if (!categoryPosts.length) {
+    notFound();
   }
 
-  // Get all unique categories from articles for sidebar
-  const allArticles = getAllArticles()
-  const articleCategories = Array.from(new Set(allArticles.map(a => a.category))).sort()
-  const allCategories = getAllCategories()
-  // Combine both lists and remove duplicates
-  const uniqueCategories = Array.from(new Set([...allCategories, ...articleCategories])).sort()
+  const featured = categoryPosts[0];
+  const otherArticles = categoryPosts.slice(1);
+  const latestArticles = allPosts
+    .filter(
+      (post) =>
+        !post.categories?.some(
+          (cat) => cat.slug?.toLowerCase() === categorySlug
+        )
+    )
+    .slice(0, 6);
 
-  // Featured article (first one)
-  const featured = items[0]
-  const otherArticles = items.slice(1)
+  const categoryMeta = allCategories.find(
+    (cat) => cat?.categoriesId?.slug?.toLowerCase() === categorySlug
+  );
+  const uniqueCategories = allCategories;
 
-  // Get latest articles for sidebar (excluding current category)
-  const latestArticles = getAllArticles()
-    .filter(a => a.category !== category)
-    .slice(0, 6)
+  const getArticlePath = (article: Article) => `/articles/${article._id}`;
+  const getPrimaryCategory = (article: Article) =>
+    article.categories?.[0]?.name || "अन्य";
+  const getPublishDate = (article: Article) =>
+    article.publishDate || article.createdAt
+      ? formatDate(article.publishDate || article.createdAt || "")
+      : "";
 
   return (
     <div className="py-6">
       {/* Breadcrumb Navigation */}
-      <nav className="mb-6 text-sm" style={{ fontSize: '15px' }}>
+      <nav className="mb-6 text-sm" style={{ fontSize: "15px" }}>
         <ol className="flex items-center gap-2 text-gray-600">
           <li>
-            <Link href="/" className="hover:text-black transition-colors">होम</Link>
+            <Link href="/" className="hover:text-black transition-colors">
+              होम
+            </Link>
           </li>
           <li className="text-gray-400">/</li>
-          <li className="text-gray-800 capitalize">{category}</li>
+          <li className="text-gray-800 capitalize">
+            {categoryMeta?.name || categorySlug}
+          </li>
         </ol>
       </nav>
 
       {/* Category Header */}
       <div className="mb-8">
         <div className="flex items-center gap-4 mb-4">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 capitalize">{category}</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 capitalize">
+            {categoryMeta?.name || categorySlug}
+          </h1>
           <div className="flex-1 border-t-2 border-[#C2185B]" />
-          <div className="text-sm text-gray-600" style={{ fontSize: '15px' }}>
-            {items.length} {items.length === 1 ? 'समाचार' : 'समाचार'}
+          <div className="text-sm text-gray-600" style={{ fontSize: "15px" }}>
+            {categoryPosts.length} समाचार
           </div>
         </div>
       </div>
@@ -68,35 +123,37 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
           {/* Featured Article */}
           {featured && (
             <div className="mb-8">
-              <Link 
-                href={`/articles/${featured.slug}`}
+              <Link
+                href={getArticlePath(featured)}
                 className="group block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow"
               >
-                {featured.image && (
+                {featured.featuredImage && (
                   <div className="w-full h-[400px] md:h-[500px] relative overflow-hidden">
-                    <Image 
-                      src={featured.image} 
-                      alt={featured.title} 
-                      fill 
-                      style={{ objectFit: 'cover' }} 
-                      unoptimized={isExternal(featured.image)}
+                    <Image
+                      src={featured.featuredImage}
+                      alt={featured.title}
+                      fill
+                      style={{ objectFit: "cover" }}
+                      unoptimized={isExternal(featured.featuredImage)}
                       className="transition-transform duration-300 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                     <div className="absolute inset-0 flex items-end">
                       <div className="p-6 w-full">
                         <div className="text-xs text-white mb-2 capitalize bg-[#C2185B] inline-block px-3 py-1 rounded-md font-semibold">
-                          {featured.category}
+                          {getPrimaryCategory(featured)}
                         </div>
                         <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 line-clamp-3 group-hover:text-[#C2185B] transition-colors">
                           {featured.title}
                         </h2>
-                        {featured.description && (
+                        {featured.subTitle && (
                           <p className="text-gray-200 text-sm md:text-base line-clamp-2 mb-2">
-                            {featured.description}
+                            {featured.subTitle}
                           </p>
                         )}
-                        <div className="text-xs text-gray-300 mt-2">{featured.publishedAt}</div>
+                        <div className="text-xs text-gray-300 mt-2">
+                          {getPublishDate(featured)}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -108,38 +165,44 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
           {/* Other Articles Grid */}
           {otherArticles.length > 0 && (
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">अधिक {category} समाचार</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                अधिक {categoryMeta?.labelName || categoryMeta?.name || categorySlug} समाचार
+              </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {otherArticles.map((article) => (
                   <Link
-                    key={article.slug}
-                    href={`/articles/${article.slug}`}
+                    key={article._id}
+                    href={getArticlePath(article)}
                     className="group block bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
                   >
-                    {article.image && (
+                    {article.featuredImage && (
                       <div className="w-full h-48 relative overflow-hidden">
-                        <Image 
-                          src={article.image} 
-                          alt={article.title} 
-                          fill 
-                          style={{ objectFit: 'cover' }} 
-                          unoptimized={isExternal(article.image)}
+                        <Image
+                          src={article.featuredImage}
+                          alt={article.title}
+                          fill
+                          style={{ objectFit: "cover" }}
+                          unoptimized={isExternal(article.featuredImage)}
                           className="transition-transform duration-300 group-hover:scale-105"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                       </div>
                     )}
                     <div className="p-4">
-                      <div className="text-xs text-[#C2185B] mb-2 capitalize font-semibold">{article.category}</div>
+                      <div className="text-xs text-[#C2185B] mb-2 capitalize font-semibold">
+                        {getPrimaryCategory(article)}
+                      </div>
                       <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 group-hover:text-[#C2185B] transition-colors mb-2">
                         {article.title}
                       </h3>
-                      {article.description && (
+                      {article.subTitle && (
                         <p className="text-sm text-gray-600 line-clamp-2 mb-2">
-                          {article.description}
+                          {article.subTitle}
                         </p>
                       )}
-                      <div className="text-xs text-gray-500">{article.publishedAt}</div>
+                      <div className="text-xs text-gray-500">
+                        {getPublishDate(article)}
+                      </div>
                     </div>
                   </Link>
                 ))}
@@ -152,44 +215,58 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
         <aside className="lg:col-span-4">
           {/* Latest News Section */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-[#C2185B]" style={{ fontSize: '15px' }}>
+            <h2
+              className="text-xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-[#C2185B]"
+              style={{ fontSize: "15px" }}
+            >
               ताज़ा खबरें
             </h2>
             <div className="space-y-4">
               {latestArticles.map((item) => (
-                <Link 
-                  key={item.slug} 
-                  href={`/articles/${item.slug}`}
+                <Link
+                  key={item._id}
+                  href={getArticlePath(item)}
                   className="group flex gap-3 pb-4 border-b border-gray-100 last:border-0 last:pb-0"
                 >
-                  {item.image && (
+                  {item.featuredImage && (
                     <div className="w-24 h-20 relative flex-shrink-0 rounded overflow-hidden">
-                      <Image 
-                        src={item.image} 
-                        alt={item.title} 
-                        fill 
-                        style={{ objectFit: 'cover' }} 
-                        unoptimized={isExternal(item.image)}
+                      <Image
+                        src={item.featuredImage}
+                        alt={item.title}
+                        fill
+                        style={{ objectFit: "cover" }}
+                        unoptimized={isExternal(item.featuredImage)}
                         className="transition-transform duration-300 group-hover:scale-105"
                       />
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs text-[#C2185B] mb-1 capitalize font-semibold">{item.category}</div>
+                    <div className="text-xs text-[#C2185B] mb-1 capitalize font-semibold">
+                      {getPrimaryCategory(item)}
+                    </div>
                     <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 group-hover:text-[#C2185B] transition-colors leading-snug">
                       {item.title}
                     </h3>
-                    <div className="text-xs text-gray-500 mt-1">{item.publishedAt}</div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      {getPublishDate(item)}
+                    </div>
                   </div>
                 </Link>
               ))}
+              {!latestArticles.length && (
+                <p className="text-sm text-gray-500">
+                  कोई अन्य समाचार उपलब्ध नहीं
+                </p>
+              )}
             </div>
           </div>
 
           {/* Newsletter/Subscribe Section */}
           <div className="bg-gradient-to-br from-[#C2185B] to-[#A0144A] rounded-lg shadow-sm p-6 text-white">
-            <h2 className="text-xl font-bold mb-2" style={{ fontSize: '15px' }}>न्यूज़लेटर सब्सक्राइब करें</h2>
-            <p className="text-sm mb-4 opacity-90" style={{ fontSize: '15px' }}>
+            <h2 className="text-xl font-bold mb-2" style={{ fontSize: "15px" }}>
+              न्यूज़लेटर सब्सक्राइब करें
+            </h2>
+            <p className="text-sm mb-4 opacity-90" style={{ fontSize: "15px" }}>
               अपने इनबॉक्स में नवीनतम समाचार और अपडेट प्राप्त करें।
             </p>
             <form className="space-y-3">
@@ -197,12 +274,12 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
                 type="email"
                 placeholder="अपना ईमेल दर्ज करें"
                 className="w-full px-4 py-2 rounded-md text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-white"
-                style={{ fontSize: '15px' }}
+                style={{ fontSize: "15px" }}
               />
               <button
                 type="submit"
                 className="w-full bg-white text-[#C2185B] px-4 py-2 rounded-md font-semibold hover:bg-gray-100 transition-colors text-sm"
-                style={{ fontSize: '15px' }}
+                style={{ fontSize: "15px" }}
               >
                 सब्सक्राइब करें
               </button>
@@ -211,27 +288,35 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
 
           {/* Category Links */}
           <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-[#C2185B]" style={{ fontSize: '15px' }}>
+            <h2
+              className="text-xl font-bold text-gray-900 mb-4 pb-3 border-b-2 border-[#C2185B]"
+              style={{ fontSize: "15px" }}
+            >
               श्रेणियाँ
             </h2>
             <div className="flex flex-wrap gap-2">
               {uniqueCategories.map((cat) => (
                 <Link
-                  key={cat}
-                  href={`/category/${cat}`}
+                  key={cat._id}
+                  href={`/category/${cat?.categoriesId?.slug}`}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    cat === category
-                      ? 'bg-[#C2185B] text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    cat?.categoriesId?.slug?.toLowerCase() === categorySlug
+                      ? "bg-[#C2185B] text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
-                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                  {cat?.labelName || cat.name}
                 </Link>
               ))}
+              {!uniqueCategories.length && (
+                <span className="text-sm text-gray-500">
+                  श्रेणियाँ उपलब्ध नहीं हैं
+                </span>
+              )}
             </div>
           </div>
         </aside>
       </div>
     </div>
-  )
+  );
 }

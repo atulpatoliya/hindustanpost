@@ -1,18 +1,20 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import { getArticlesByCategory } from '../lib/articles'
+import Image from "next/image";
+import Link from "next/link";
+import { getArticlesByCategory } from "../lib/articles";
+import { Article } from "@/types/article";
+import { formatDate } from "@/lib/formatDate";
 
-const FALLBACK = [
-  { slug: 'life-1', title: 'लाइफस्टाइल: स्वस्थ रहने के आसान उपाय', publishedAt: 'October 20, 2025', image: '/uploads/india-economy-growth.png' },
-  { slug: 'life-2', title: 'फैशन टिप्स: सर्दियों के लिए स्टाइलिश आउटफिट', publishedAt: 'October 18, 2025', image: '/uploads/new-tech-startups.jpg' },
-  { slug: 'life-3', title: 'खान-पान: पौष्टिक और त्वरित नाश्ते', publishedAt: 'October 15, 2025', image: '/uploads/Test2.jpg' },
-  { slug: 'life-4', title: 'यात्रा: वीकेंड के लिए बेस्ट गेटअवे', publishedAt: 'October 10, 2025', image: '/uploads/national-election-preview.png' },
-  { slug: 'life-5', title: 'होम डेकोर: बजट में सुंदर घर', publishedAt: 'October 5, 2025', image: '/uploads/india-economy-growth.png' }
-]
+export default function LifestyleSection({
+  lifestylePosts,
+}: {
+  lifestylePosts: Article[];
+}) {
+  if (lifestylePosts.length === 0) {
+    return null;
+  }
 
-export default function LifestyleSection() {
-  const items = getArticlesByCategory('lifestyle') || []
-  const display = items.length > 0 ? items.slice(0, 5) : FALLBACK
+  const items = getArticlesByCategory("lifestyle") || [];
+  const display = lifestylePosts.length > 0 && lifestylePosts.slice(0, 5);
 
   return (
     <section className="mt-8">
@@ -23,25 +25,43 @@ export default function LifestyleSection() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {display.map(item => (
-            <article key={item.slug} className="bg-white rounded shadow-md overflow-hidden">
-              <div className="w-full h-40 relative">
-                {item.image ? (
-                  <Image src={item.image} alt={item.title} fill style={{ objectFit: 'cover' }} unoptimized />
-                ) : (
-                  <div className="bg-gray-200 w-full h-full" />
-                )}
-              </div>
-              <div className="p-3">
-                <h3 className="text-sm leading-snug mb-2 line-clamp-3">
-                  <Link href={`/articles/${item.slug}`} className="text-gray-900 hover:text-blue-600">{item.title}</Link>
-                </h3>
-                <div className="text-xs text-gray-500">{item.publishedAt}</div>
-              </div>
-            </article>
-          ))}
+          {display &&
+            display?.length > 0 &&
+            display?.map((item: Article) => (
+              <article
+                key={item._id}
+                className="bg-white rounded shadow-md overflow-hidden"
+              >
+                <div className="w-full h-40 relative">
+                  {item.featuredImage ? (
+                    <Image
+                      src={item.featuredImage}
+                      alt={item.title}
+                      fill
+                      style={{ objectFit: "cover" }}
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="bg-gray-200 w-full h-full" />
+                  )}
+                </div>
+                <div className="p-3">
+                  <h3 className="text-sm leading-snug mb-2 line-clamp-3">
+                    <Link
+                      href={`/articles/${item?._id}`}
+                      className="text-gray-900 hover:text-blue-600"
+                    >
+                      {item.title}
+                    </Link>
+                  </h3>
+                  <div className="text-xs text-gray-500">
+                    {formatDate(item.publishDate)}
+                  </div>
+                </div>
+              </article>
+            ))}
         </div>
       </div>
     </section>
-  )
+  );
 }
